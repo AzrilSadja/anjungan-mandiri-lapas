@@ -121,9 +121,10 @@ const nextQueue = async (loket: LoketNumber) => {
     const text = `Nomor antrean ${nomorBaca}. Silakan menuju loket ${loketIndonesia[loket]}`;
 
 const audio = new Audio(
-  `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=id&q=${encodeURIComponent(text)}`
+  `https://api.streamelements.com/kappa/v2/speech?voice=id-ID-GadisNeural&text=${encodeURIComponent(text)}`
 );
 
+id-ID-GadisNeural
 audio.play();
 
     setIncomingQueue(null);
