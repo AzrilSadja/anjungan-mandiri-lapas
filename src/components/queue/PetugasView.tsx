@@ -85,12 +85,16 @@ const nextQueue = async (loket: LoketNumber) => {
 
     const voices = window.speechSynthesis.getVoices();
 
-    const femaleVoice = voices.find(
-      (voice) =>
-        voice.name.toLowerCase().includes("female") ||
-        voice.name.toLowerCase().includes("zira") ||
-        voice.name.toLowerCase().includes("siti")
-    );
+const femaleVoice =
+  voices.find((voice) =>
+    voice.name.includes("Microsoft Zira")
+  ) ||
+  voices.find((voice) =>
+    voice.name.includes("Siti")
+  ) ||
+  voices.find((voice) =>
+    voice.name.toLowerCase().includes("female")
+  );
 
     if (femaleVoice) {
       utterance.voice = femaleVoice;
