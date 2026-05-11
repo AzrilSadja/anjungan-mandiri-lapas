@@ -83,7 +83,20 @@ const nextQueue = async (loket: LoketNumber) => {
       `Nomor antrean loket ${loket}`
     );
 
-    const voices = window.speechSynthesis.getVoices();
+const voices = window.speechSynthesis.getVoices();
+
+console.log(voices);
+
+const femaleVoice =
+  voices.find((voice) =>
+    voice.name.includes("Microsoft Zira")
+  ) ||
+  voices.find((voice) =>
+    voice.name.includes("Siti")
+  ) ||
+  voices.find((voice) =>
+    voice.name.toLowerCase().includes("female")
+  );
 
 const femaleVoice =
   voices.find((voice) =>
