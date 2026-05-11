@@ -79,49 +79,50 @@ const loketIndonesia: Record<number, string> = {
   4: "empat",
 };
 
+const nomorIndonesia = (nomor: string) => {
+  return nomor
+    .replace(/0/g, " nol ")
+    .replace(/1/g, " satu ")
+    .replace(/2/g, " dua ")
+    .replace(/3/g, " tiga ")
+    .replace(/4/g, " empat ")
+    .replace(/5/g, " lima ")
+    .replace(/6/g, " enam ")
+    .replace(/7/g, " tujuh ")
+    .replace(/8/g, " delapan ")
+    .replace(/9/g, " sembilan ");
+};
+
 const nextQueue = async (loket: LoketNumber) => {
-  try {
-    setActionError("");
+        v.name.toLowerCase().includes("zira")
+      ) ||
+      voices.find((v) =>
+        v.name.toLowerCase().includes("siti")
+      ) ||
+      voices.find((v) =>
+        v.lang.includes("id")
+      );
 
-    await callQueueTicket(loket);
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
 
-    // hentikan suara sebelumnya
-    window.speechSynthesis.cancel();
+    utterance.lang = "id-ID";
+    utterance.pitch = 1;
+    utterance.rate = 0.82;
+    utterance.volume = 1;
 
-    // ambil data antrean terbaru
-    const data = await getQueueState();
+    // jalankan suara
+    setTimeout(() => {
+      window.speechSynthesis.speak(utterance);
+    }, 300);
 
-    setCurrentQueue(data.currentQueue);
-    setPendingQueues(data.pendingQueues);
+    setIncomingQueue(null);
+  } catch {
+    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+  }
+};
 
-    const nomorAntrean = data.currentQueue[loket].nomor;
-
-    // teks suara antrean
-    const utterance = new SpeechSynthesisUtterance(
-      `Nomor antrean ${nomorAntrean}. Silakan menuju loket ${loketIndonesia[loket]}`
-    );
-
-   const voices = window.speechSynthesis.getVoices();
-
-const femaleVoice =
-  voices.find((v) =>
-    v.name.toLowerCase().includes("female")
-  ) ||
-  voices.find((v) =>
-    v.name.toLowerCase().includes("zira")
-  ) ||
-  voices.find((v) =>
-    v.name.toLowerCase().includes("siti")
-  );
-
-if (femaleVoice) {
-  utterance.voice = femaleVoice;
-}
-
-utterance.lang = "id-ID";
-utterance.pitch = 1;
-utterance.rate = 0.85;
-utterance.volume = 1;
     // jalankan suara
     setTimeout(() => {
       window.speechSynthesis.speak(utterance);
