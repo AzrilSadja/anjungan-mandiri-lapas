@@ -88,7 +88,7 @@ const nextQueue = async (loket: LoketNumber) => {
     // hentikan suara sebelumnya
     window.speechSynthesis.cancel();
 
-    // ambil nomor antrean terbaru
+    // ambil data antrean terbaru
     const data = await getQueueState();
 
     setCurrentQueue(data.currentQueue);
@@ -96,28 +96,18 @@ const nextQueue = async (loket: LoketNumber) => {
 
     const nomorAntrean = data.currentQueue[loket].nomor;
 
-    // suara antrean
+    // teks suara antrean
     const utterance = new SpeechSynthesisUtterance(
       `Nomor antrean ${nomorAntrean}. Silakan menuju loket ${loketIndonesia[loket]}`
     );
 
-    // pakai voice indonesia apa saja yang tersedia
-    const voices = window.speechSynthesis.getVoices();
-
-    const indoVoice =
-      voices.find((v) => v.lang === "id-ID") ||
-      voices.find((v) => v.lang.includes("id"));
-
-    if (indoVoice) {
-      utterance.voice = indoVoice;
-    }
-
+    // pengaturan suara
     utterance.lang = "id-ID";
     utterance.pitch = 1;
     utterance.rate = 0.85;
     utterance.volume = 1;
 
-    // mainkan suara
+    // jalankan suara
     setTimeout(() => {
       window.speechSynthesis.speak(utterance);
     }, 200);
