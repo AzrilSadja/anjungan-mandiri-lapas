@@ -81,20 +81,23 @@ const loketIndonesia: Record<number, string> = {
 
 const nomorIndonesia = (nomor: string) => {
   return nomor
-    .replace(/A/g, " A ")
-    .replace(/B/g, " B ")
-    .replace(/C/g, " C ")
-    .replace(/D/g, " D ")
-    .replace(/0/g, " nol ")
-    .replace(/1/g, " satu ")
-    .replace(/2/g, " dua ")
-    .replace(/3/g, " tiga ")
-    .replace(/4/g, " empat ")
-    .replace(/5/g, " lima ")
-    .replace(/6/g, " enam ")
-    .replace(/7/g, " tujuh ")
-    .replace(/8/g, " delapan ")
-    .replace(/9/g, " sembilan ");
+    .split("")
+    .map((char) => {
+      switch (char) {
+        case "0": return "nol";
+        case "1": return "satu";
+        case "2": return "dua";
+        case "3": return "tiga";
+        case "4": return "empat";
+        case "5": return "lima";
+        case "6": return "enam";
+        case "7": return "tujuh";
+        case "8": return "delapan";
+        case "9": return "sembilan";
+        default: return char;
+      }
+    })
+    .join(" ");
 };
 
 const nextQueue = async (loket: LoketNumber) => {
@@ -103,63 +106,61 @@ const nextQueue = async (loket: LoketNumber) => {
 
     await callQueueTicket(loket);
 
-    // hentikan suara sebelumnya
-    window.speechSynthesis.cancel();
-
-    // ambil data antrean terbaru
     const data = await getQueueState();
-
     setCurrentQueue(data.currentQueue);
     setPendingQueues(data.pendingQueues);
 
-    const nomorAntrean = data.currentQueue[loket].nomor;
+    const current = data.currentQueue[loket];
 
-    // ubah nomor jadi bahasa Indonesia
-    const nomorBaca = nomorIndonesia(nomorAntrean);
+if (current) {
 
-    // teks suara
-    const text = `Nomor antrean ${nomorBaca}. Silakan menuju loket ${loketIndonesia[loket]}`;
+  const huruf = current.code.charAt(0);
+  const angka = current.code.slice(1);
 
-const utterance = new SpeechSynthesisUtterance(text);
+  const text = `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. Silakan menuju loket ${loketIndonesia[loket]}`;
 
-utterance.lang = "id-ID";
-utterance.rate = 0.85;
-utterance.pitch = 1.3;
-utterance.volume = 1;
+  window.speechSynthesis.cancel();
 
-const voices = window.speechSynthesis.getVoices();
+  const utterance = new SpeechSynthesisUtterance(text);
 
-const femaleVoice =
-  voices.find((v) =>
-    v.name.toLowerCase().includes("siti")
-  ) ||
-  voices.find((v) =>
-    v.name.toLowerCase().includes("female")
-  ) ||
-  voices.find((v) =>
-    v.name.toLowerCase().includes("zira")
-  ) ||
-  voices.find((v) =>
-    v.lang === "id-ID"
-  );
+  utterance.lang = "id-ID";
+  utterance.rate = 0.8;
+  utterance.pitch = 1.4;
+  utterance.volume = 1;
 
-if (femaleVoice) {
+  const voices = window.speechSynthesis.getVoices();
+
+  console.log(voices);
+
+  const femaleVoice =
+    voices.find((v) =>
+      v.name.toLowerCase().includes("zira")
+    ) ||
+    voices.find((v) =>
+      v.name.toLowerCase().includes("female")
+    ) ||
+    voices.find((v) =>
+      v.name.toLowerCase().includes("siti")
+    );
+
+    if (femaleVoice) {
   utterance.voice = femaleVoice;
+  utterance.lang = "id-ID";
 }
-
-window.speechSynthesis.cancel();
 
 setTimeout(() => {
   window.speechSynthesis.speak(utterance);
-}, 200);
+}, 300);
 
-audio.play();
+}
 
-    setIncomingQueue(null);
-  } catch {
-    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
-  }
+setIncomingQueue(null);
+
+} catch {
+  setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+}
 };
+
   useEffect(() => {
     if ((variant === "v2" || variant === "v3") && incomingQueue) {
       const timer = window.setTimeout(() => setIncomingQueue(null), 5000);
