@@ -87,16 +87,23 @@ const voices = window.speechSynthesis.getVoices();
 console.log(voices);
 
 const femaleVoice =
-  voices.find(v => v.name.includes("Female")) ||
-  voices.find(v => v.name.includes("Google UK English Female")) ||
-  voices.find(v => v.name.includes("Microsoft Zira")) ||
+  voices.find(v => v.lang === "id-ID" && v.name.includes("Female")) ||
+  voices.find(v => v.lang === "id-ID") ||
   voices.find(v => v.name.includes("Siti")) ||
-  voices.find(v => v.name.includes("Indah"));
+  voices.find(v => v.name.includes("Indah")) ||
+  voices.find(v => v.name.includes("Google Bahasa Indonesia")) ||
+  voices.find(v => v.name.includes("Microsoft Andika"));
+
+  utterance.lang = "id-ID";
+
 
 if (femaleVoice) {
   utterance.voice = femaleVoice;
 }
 
+utterance.lang = "id-ID";
+utterance.pitch = 1.3;
+utterance.rate = 0.9;
 utterance.pitch = 1.3;
 utterance.rate = 0.9;
 
