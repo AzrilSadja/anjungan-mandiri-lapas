@@ -156,17 +156,6 @@ const nextQueue = async (loket: LoketNumber) => {
     setActionError("Gagal memanggil antrean. Silakan coba lagi.");
   }
 };
-
-    // jalankan suara
-    setTimeout(() => {
-      window.speechSynthesis.speak(utterance);
-    }, 200);
-
-    setIncomingQueue(null);
-  } catch {
-    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
-  }
-};
   useEffect(() => {
     if ((variant === "v2" || variant === "v3") && incomingQueue) {
       const timer = window.setTimeout(() => setIncomingQueue(null), 5000);
