@@ -124,7 +124,6 @@ const audio = new Audio(
   `https://api.streamelements.com/kappa/v2/speech?voice=id-ID-GadisNeural&text=${encodeURIComponent(text)}`
 );
 
-id-ID-GadisNeural
 audio.play();
 
     setIncomingQueue(null);
