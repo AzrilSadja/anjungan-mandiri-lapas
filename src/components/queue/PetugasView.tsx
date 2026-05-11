@@ -79,13 +79,6 @@ const loketIndonesia: Record<number, string> = {
   4: "empat",
 };
 
-const loketIndonesia: Record<number, string> = {
-  1: "satu",
-  2: "dua",
-  3: "tiga",
-  4: "empat",
-};
-
 const nextQueue = async (loket: LoketNumber) => {
   try {
     setActionError("");
