@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --background: #020617;
+  --foreground: #f8fafc;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes monitor-call-pulse {
+  0% {
+    background-color: #1e3a8a;
+  }
+  50% {
+    background-color: #3b82f6;
+  }
+  100% {
+    background-color: #1e3a8a;
+  }
+}
+
+.monitor-call-anim {
+  animation: monitor-call-pulse 1s infinite;
+}
+
+@keyframes petugas-toast-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.petugas-toast {
+  animation: petugas-toast-in 280ms ease-out;
+}

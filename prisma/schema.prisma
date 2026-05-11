@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  password        String
+  rememberToken   String?   @map("remember_token")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  sessions        Session[]
+
+  @@map("users")
+}
+
+model PasswordResetToken {
+  email     String    @id
+  token     String
+  createdAt DateTime? @map("created_at")
+
+  @@map("password_reset_tokens")
+}
+
+model Session {
+  id           String   @id
+  userId       Int?     @map("user_id")
+  ipAddress    String?  @map("ip_address")
+  userAgent    String?  @map("user_agent")
+  payload      String
+  lastActivity Int      @map("last_activity")
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([lastActivity])
+  @@map("sessions")
+}
+
+model CacheEntry {
+  key        String @id
+  value      String
+  expiration BigInt
+
+  @@index([expiration])
+  @@map("cache")
+}
+
+model CacheLock {
+  key        String @id
+  owner      String
+  expiration BigInt
+
+  @@index([expiration])
+  @@map("cache_locks")
+}
+
+model Job {
+  id          Int     @id @default(autoincrement())
+  queue       String
+  payload     String
+  attempts    Int
+  reservedAt  Int?    @map("reserved_at")
+  availableAt Int     @map("available_at")
+  createdAt   Int     @map("created_at")
+
+  @@index([queue])
+  @@map("jobs")
+}
+
+model JobBatch {
+  id          String  @id
+  name        String
+  totalJobs   Int     @map("total_jobs")
+  pendingJobs Int     @map("pending_jobs")
+  failedJobs  Int     @map("failed_jobs")
+  failedJobIds String @map("failed_job_ids")
+  options     String?
+  cancelledAt Int?    @map("cancelled_at")
+  createdAt   Int     @map("created_at")
+  finishedAt  Int?    @map("finished_at")
+
+  @@map("job_batches")
+}
+
+model FailedJob {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique
+  connection String
+  queue      String
+  payload    String
+  exception  String
+  failedAt   DateTime @default(now()) @map("failed_at")
+
+  @@map("failed_jobs")
+}
+
+model QueueState {
+  id         Int      @id
+  businessDate String @map("business_date")
+  counterA   Int      @default(0) @map("counter_a")
+  counterB   Int      @default(0) @map("counter_b")
+  counterC   Int      @default(0) @map("counter_c")
+  counterD   Int      @default(0) @map("counter_d")
+  currentA   String   @default("A-000") @map("current_a")
+  currentB   String   @default("B-000") @map("current_b")
+  currentC   String   @default("C-000") @map("current_c")
+  currentD   String   @default("D-000") @map("current_d")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("queue_state")
+}
+
+model QueueTicket {
+  id           BigInt   @id @default(autoincrement())
+  businessDate String   @map("business_date")
+  nomor        String
+  loket        Int
+  layanan      String
+  kode         String
+  waktu        BigInt
+  status       String   @default("pending")
+  calledAt     DateTime? @map("called_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([businessDate, status, kode, id])
+  @@index([status, loket, id])
+  @@index([businessDate, id])
+  @@map("queue_tickets")
+}
