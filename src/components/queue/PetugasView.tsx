@@ -120,36 +120,11 @@ const nextQueue = async (loket: LoketNumber) => {
     // teks suara
     const text = `Nomor antrean ${nomorBaca}. Silakan menuju loket ${loketIndonesia[loket]}`;
 
-    const utterance = new SpeechSynthesisUtterance(text);
+const audio = new Audio(
+  `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=id&q=${encodeURIComponent(text)}`
+);
 
-    // ambil semua voice
-    const voices = window.speechSynthesis.getVoices();
-
-    // pilih voice Indonesia
-    const femaleVoice =
-      voices.find((v) =>
-        v.name.includes("Google Bahasa Indonesia")
-      ) ||
-      voices.find((v) =>
-        v.lang === "id-ID"
-      ) ||
-      voices.find((v) =>
-        v.lang.includes("id")
-      );
-
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
-    }
-
-    utterance.lang = "id-ID";
-    utterance.pitch = 1;
-    utterance.rate = 0.78;
-    utterance.volume = 1;
-
-    // jalankan suara
-    setTimeout(() => {
-      window.speechSynthesis.speak(utterance);
-    }, 300);
+audio.play();
 
     setIncomingQueue(null);
   } catch {
