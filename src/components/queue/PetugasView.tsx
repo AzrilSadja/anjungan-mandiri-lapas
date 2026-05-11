@@ -72,18 +72,46 @@ export function PetugasView({ variant = "v1" }: { variant?: PetugasVariant }) {
     [pendingQueues],
   );
 
-  const nextQueue = async (loket: LoketNumber) => {
-    try {
-      setActionError("");
-      await callQueueTicket(loket);
-      setIncomingQueue(null);
-      const data = await getQueueState();
-      setCurrentQueue(data.currentQueue);
-      setPendingQueues(data.pendingQueues);
-    } catch {
-      setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+const nextQueue = async (loket: LoketNumber) => {
+  try {
+    setActionError("");
+
+    await callQueueTicket(loket);
+
+    // Suara panggilan antrean wanita
+    const utterance = new SpeechSynthesisUtterance(
+      `Nomor antrean loket ${loket}`
+    );
+
+    const voices = window.speechSynthesis.getVoices();
+
+    const femaleVoice = voices.find(
+      (voice) =>
+        voice.name.toLowerCase().includes("female") ||
+        voice.name.toLowerCase().includes("zira") ||
+        voice.name.toLowerCase().includes("siti")
+    );
+
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
     }
-  };
+
+    utterance.lang = "id-ID";
+    utterance.pitch = 1.2;
+    utterance.rate = 0.9;
+    utterance.volume = 1;
+
+    window.speechSynthesis.speak(utterance);
+
+    setIncomingQueue(null);
+
+    const data = await getQueueState();
+    setCurrentQueue(data.currentQueue);
+    setPendingQueues(data.pendingQueues);
+  } catch {
+    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+  }
+};
 
   useEffect(() => {
     if ((variant === "v2" || variant === "v3") && incomingQueue) {
