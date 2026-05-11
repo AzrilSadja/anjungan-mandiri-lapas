@@ -101,12 +101,27 @@ const nextQueue = async (loket: LoketNumber) => {
       `Nomor antrean ${nomorAntrean}. Silakan menuju loket ${loketIndonesia[loket]}`
     );
 
-    // pengaturan suara
-    utterance.lang = "id-ID";
-    utterance.pitch = 1;
-    utterance.rate = 0.85;
-    utterance.volume = 1;
+   const voices = window.speechSynthesis.getVoices();
 
+const femaleVoice =
+  voices.find((v) =>
+    v.name.toLowerCase().includes("female")
+  ) ||
+  voices.find((v) =>
+    v.name.toLowerCase().includes("zira")
+  ) ||
+  voices.find((v) =>
+    v.name.toLowerCase().includes("siti")
+  );
+
+if (femaleVoice) {
+  utterance.voice = femaleVoice;
+}
+
+utterance.lang = "id-ID";
+utterance.pitch = 1;
+utterance.rate = 0.85;
+utterance.volume = 1;
     // jalankan suara
     setTimeout(() => {
       window.speechSynthesis.speak(utterance);
