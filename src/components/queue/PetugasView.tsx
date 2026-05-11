@@ -130,27 +130,38 @@ if (current) {
 
   const voices = window.speechSynthesis.getVoices();
 
-  console.log(voices);
+console.log(
+  voices.map((v) => ({
+    name: v.name,
+    lang: v.lang,
+  }))
+);
 
-  const femaleVoice =
-    voices.find((v) =>
-      v.name.toLowerCase().includes("zira")
-    ) ||
-    voices.find((v) =>
-      v.name.toLowerCase().includes("female")
-    ) ||
-    voices.find((v) =>
-      v.name.toLowerCase().includes("siti")
-    );
+const femaleVoice =
+  voices.find((v) =>
+    v.name.includes("Microsoft Zira")
+  ) ||
+  voices.find((v) =>
+    v.name.includes("Zira")
+  ) ||
+  voices.find((v) =>
+    v.name.toLowerCase().includes("female")
+  ) ||
+  voices.find((v) =>
+    v.name.toLowerCase().includes("zira")
+  );
 
-    if (femaleVoice) {
+if (femaleVoice) {
   utterance.voice = femaleVoice;
-  utterance.lang = "id-ID";
 }
 
+utterance.lang = "id-ID";
+}
+
+window.speechSynthesis.speak(utterance);
 setTimeout(() => {
   window.speechSynthesis.speak(utterance);
-}, 300);
+}, 200);
 
 }
 
