@@ -85,41 +85,44 @@ const nextQueue = async (loket: LoketNumber) => {
 
     await callQueueTicket(loket);
 
-    // Suara panggilan antrean wanita Indonesia
+    // hentikan suara sebelumnya
+    window.speechSynthesis.cancel();
+
+    // ambil nomor antrean terbaru
+    const data = await getQueueState();
+
+    setCurrentQueue(data.currentQueue);
+    setPendingQueues(data.pendingQueues);
+
+    const nomorAntrean = data.currentQueue[loket].nomor;
+
+    // suara antrean
     const utterance = new SpeechSynthesisUtterance(
-      `Nomor antrean. Silakan menuju loket ${loketIndonesia[loket]}`
+      `Nomor antrean ${nomorAntrean}. Silakan menuju loket ${loketIndonesia[loket]}`
     );
 
+    // pakai voice indonesia apa saja yang tersedia
     const voices = window.speechSynthesis.getVoices();
 
-    const femaleVoice =
-      voices.find(v => v.lang === "id-ID" && v.name.includes("Female")) ||
-      voices.find(v => v.lang === "id-ID") ||
-      voices.find(v => v.name.includes("Siti")) ||
-      voices.find(v => v.name.includes("Indah")) ||
-      voices.find(v => v.name.includes("Google Bahasa Indonesia")) ||
-      voices.find(v => v.name.includes("Microsoft Andika"));
+    const indoVoice =
+      voices.find((v) => v.lang === "id-ID") ||
+      voices.find((v) => v.lang.includes("id"));
 
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
+    if (indoVoice) {
+      utterance.voice = indoVoice;
     }
 
     utterance.lang = "id-ID";
-    utterance.pitch = 1.2;
-    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.rate = 0.85;
     utterance.volume = 1;
 
-window.speechSynthesis.cancel();
-
-setTimeout(() => {
-  window.speechSynthesis.speak(utterance);
-}, 100);
+    // mainkan suara
+    setTimeout(() => {
+      window.speechSynthesis.speak(utterance);
+    }, 200);
 
     setIncomingQueue(null);
-
-    const data = await getQueueState();
-    setCurrentQueue(data.currentQueue);
-    setPendingQueues(data.pendingQueues);
   } catch {
     setActionError("Gagal memanggil antrean. Silakan coba lagi.");
   }
