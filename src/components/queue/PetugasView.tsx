@@ -116,8 +116,11 @@ const nextQueue = async (loket: LoketNumber) => {
     utterance.rate = 0.9;
     utterance.volume = 1;
 
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
+window.speechSynthesis.cancel();
+
+setTimeout(() => {
+  window.speechSynthesis.speak(utterance);
+}, 100);
 
     setIncomingQueue(null);
 
