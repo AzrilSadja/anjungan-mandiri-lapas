@@ -76,12 +76,33 @@ const nextQueue = async (loket: LoketNumber) => {
   try {
     setActionError("");
 
-    await callQueueTicket(loket);
+await callQueueTicket(loket);
 
-    // Suara panggilan antrean wanita
-    const utterance = new SpeechSynthesisUtterance(
-      `Nomor antrean loket ${loket}`
-    );
+// Suara panggilan antrean wanita
+const utterance = new SpeechSynthesisUtterance(
+  `Nomor antrean loket ${loket}`
+);
+
+const voices = window.speechSynthesis.getVoices();
+console.log(voices);
+
+const femaleVoice =
+  voices.find(v => v.name.includes("Female")) ||
+  voices.find(v => v.name.includes("Google UK English Female")) ||
+  voices.find(v => v.name.includes("Microsoft Zira")) ||
+  voices.find(v => v.name.includes("Siti")) ||
+  voices.find(v => v.name.includes("Indah"));
+
+if (femaleVoice) {
+  utterance.voice = femaleVoice;
+}
+
+utterance.pitch = 1.3;
+utterance.rate = 0.9;
+
+window.speechSynthesis.speak(utterance);
+
+setIncomingQueue(null);
 
 const voices = window.speechSynthesis.getVoices();
 
