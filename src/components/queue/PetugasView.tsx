@@ -120,9 +120,38 @@ const nextQueue = async (loket: LoketNumber) => {
     // teks suara
     const text = `Nomor antrean ${nomorBaca}. Silakan menuju loket ${loketIndonesia[loket]}`;
 
-const audio = new Audio(
-  `https://api.streamelements.com/kappa/v2/speech?voice=id-ID-GadisNeural&text=${encodeURIComponent(text)}`
-);
+const utterance = new SpeechSynthesisUtterance(text);
+
+utterance.lang = "id-ID";
+utterance.rate = 0.85;
+utterance.pitch = 1.3;
+utterance.volume = 1;
+
+const voices = window.speechSynthesis.getVoices();
+
+const femaleVoice =
+  voices.find((v) =>
+    v.name.toLowerCase().includes("siti")
+  ) ||
+  voices.find((v) =>
+    v.name.toLowerCase().includes("female")
+  ) ||
+  voices.find((v) =>
+    v.name.toLowerCase().includes("zira")
+  ) ||
+  voices.find((v) =>
+    v.lang === "id-ID"
+  );
+
+if (femaleVoice) {
+  utterance.voice = femaleVoice;
+}
+
+window.speechSynthesis.cancel();
+
+setTimeout(() => {
+  window.speechSynthesis.speak(utterance);
+}, 200);
 
 audio.play();
 
