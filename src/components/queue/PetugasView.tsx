@@ -156,13 +156,7 @@ if (femaleVoice) {
 }
 
 utterance.lang = "id-ID";
-}
-
 window.speechSynthesis.speak(utterance);
-setTimeout(() => {
-  window.speechSynthesis.speak(utterance);
-}, 200);
-
 }
 
 setIncomingQueue(null);
