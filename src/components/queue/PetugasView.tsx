@@ -81,6 +81,10 @@ const loketIndonesia: Record<number, string> = {
 
 const nomorIndonesia = (nomor: string) => {
   return nomor
+    .replace(/A/g, " A ")
+    .replace(/B/g, " B ")
+    .replace(/C/g, " C ")
+    .replace(/D/g, " D ")
     .replace(/0/g, " nol ")
     .replace(/1/g, " satu ")
     .replace(/2/g, " dua ")
@@ -94,10 +98,40 @@ const nomorIndonesia = (nomor: string) => {
 };
 
 const nextQueue = async (loket: LoketNumber) => {
-        v.name.toLowerCase().includes("zira")
+  try {
+    setActionError("");
+
+    await callQueueTicket(loket);
+
+    // hentikan suara sebelumnya
+    window.speechSynthesis.cancel();
+
+    // ambil data antrean terbaru
+    const data = await getQueueState();
+
+    setCurrentQueue(data.currentQueue);
+    setPendingQueues(data.pendingQueues);
+
+    const nomorAntrean = data.currentQueue[loket].nomor;
+
+    // ubah nomor jadi bahasa Indonesia
+    const nomorBaca = nomorIndonesia(nomorAntrean);
+
+    // teks suara
+    const text = `Nomor antrean ${nomorBaca}. Silakan menuju loket ${loketIndonesia[loket]}`;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    // ambil semua voice
+    const voices = window.speechSynthesis.getVoices();
+
+    // pilih voice Indonesia
+    const femaleVoice =
+      voices.find((v) =>
+        v.name.includes("Google Bahasa Indonesia")
       ) ||
       voices.find((v) =>
-        v.name.toLowerCase().includes("siti")
+        v.lang === "id-ID"
       ) ||
       voices.find((v) =>
         v.lang.includes("id")
@@ -109,7 +143,7 @@ const nextQueue = async (loket: LoketNumber) => {
 
     utterance.lang = "id-ID";
     utterance.pitch = 1;
-    utterance.rate = 0.82;
+    utterance.rate = 0.78;
     utterance.volume = 1;
 
     // jalankan suara
