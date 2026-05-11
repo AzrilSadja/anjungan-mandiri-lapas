@@ -117,21 +117,18 @@ if (current) {
   const huruf = current.code.charAt(0);
   const angka = current.code.slice(1);
 
-  const text = `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. Silakan menuju loket ${loketIndonesia[loket]}`;
+  const text =
+  `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
+  `Silakan menuju loket ${loketIndonesia[loket]}`;
 
-  window.speechSynthesis.cancel();
+const utterance = new SpeechSynthesisUtterance(text);
 
-  const utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = "id-ID";
+utterance.rate = 0.8;
+utterance.pitch = 1.2;
+utterance.volume = 1;
 
-  utterance.lang = "id-ID";
-  utterance.rate = 0.8;
-  utterance.pitch = 1.4;
-  utterance.volume = 1;
-
-  await new Promise((resolve) => {
-  window.speechSynthesis.onvoiceschanged = resolve;
-});
-  const voices = window.speechSynthesis.getVoices();
+const voices = window.speechSynthesis.getVoices();
 
 console.log(
   voices.map((v) => ({
@@ -142,13 +139,7 @@ console.log(
 
 const femaleVoice =
   voices.find((v) =>
-    v.name.includes("Microsoft Zira")
-  ) ||
-  voices.find((v) =>
-    v.name.includes("Zira")
-  ) ||
-  voices.find((v) =>
-    v.name.toLowerCase().includes("female")
+    v.lang.toLowerCase().includes("id")
   ) ||
   voices.find((v) =>
     v.name.toLowerCase().includes("zira")
@@ -158,8 +149,12 @@ if (femaleVoice) {
   utterance.voice = femaleVoice;
 }
 
-utterance.lang = "id-ID";
-window.speechSynthesis.speak(utterance);
+window.speechSynthesis.cancel();
+
+setTimeout(() => {
+  window.speechSynthesis.speak(utterance);
+}, 100);
+
 }
 
 setIncomingQueue(null);
