@@ -72,70 +72,40 @@ export function PetugasView({ variant = "v1" }: { variant?: PetugasVariant }) {
     [pendingQueues],
   );
 
+const loketIndonesia: Record<number, string> = {
+  1: "satu",
+  2: "dua",
+  3: "tiga",
+  4: "empat",
+};
+
+const loketIndonesia: Record<number, string> = {
+  1: "satu",
+  2: "dua",
+  3: "tiga",
+  4: "empat",
+};
+
 const nextQueue = async (loket: LoketNumber) => {
   try {
     setActionError("");
 
-await callQueueTicket(loket);
+    await callQueueTicket(loket);
 
-// Suara panggilan antrean wanita
-const utterance = new SpeechSynthesisUtterance(
-  `Nomor antrean loket ${loket}`
-);
+    // Suara panggilan antrean wanita Indonesia
+    const utterance = new SpeechSynthesisUtterance(
+      `Nomor antrean. Silakan menuju loket ${loketIndonesia[loket]}`
+    );
 
-const voices = window.speechSynthesis.getVoices();
-console.log(voices);
+    const voices = window.speechSynthesis.getVoices();
 
-const femaleVoice =
-  voices.find(v => v.lang === "id-ID" && v.name.includes("Female")) ||
-  voices.find(v => v.lang === "id-ID") ||
-  voices.find(v => v.name.includes("Siti")) ||
-  voices.find(v => v.name.includes("Indah")) ||
-  voices.find(v => v.name.includes("Google Bahasa Indonesia")) ||
-  voices.find(v => v.name.includes("Microsoft Andika"));
-
-  utterance.lang = "id-ID";
-
-
-if (femaleVoice) {
-  utterance.voice = femaleVoice;
-}
-
-utterance.lang = "id-ID";
-utterance.pitch = 1.3;
-utterance.rate = 0.9;
-utterance.pitch = 1.3;
-utterance.rate = 0.9;
-
-window.speechSynthesis.speak(utterance);
-
-setIncomingQueue(null);
-
-const voices = window.speechSynthesis.getVoices();
-
-console.log(voices);
-
-const femaleVoice =
-  voices.find((voice) =>
-    voice.name.includes("Microsoft Zira")
-  ) ||
-  voices.find((voice) =>
-    voice.name.includes("Siti")
-  ) ||
-  voices.find((voice) =>
-    voice.name.toLowerCase().includes("female")
-  );
-
-const femaleVoice =
-  voices.find((voice) =>
-    voice.name.includes("Microsoft Zira")
-  ) ||
-  voices.find((voice) =>
-    voice.name.includes("Siti")
-  ) ||
-  voices.find((voice) =>
-    voice.name.toLowerCase().includes("female")
-  );
+    const femaleVoice =
+      voices.find(v => v.lang === "id-ID" && v.name.includes("Female")) ||
+      voices.find(v => v.lang === "id-ID") ||
+      voices.find(v => v.name.includes("Siti")) ||
+      voices.find(v => v.name.includes("Indah")) ||
+      voices.find(v => v.name.includes("Google Bahasa Indonesia")) ||
+      voices.find(v => v.name.includes("Microsoft Andika"));
 
     if (femaleVoice) {
       utterance.voice = femaleVoice;
@@ -146,6 +116,7 @@ const femaleVoice =
     utterance.rate = 0.9;
     utterance.volume = 1;
 
+    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
 
     setIncomingQueue(null);
@@ -157,7 +128,6 @@ const femaleVoice =
     setActionError("Gagal memanggil antrean. Silakan coba lagi.");
   }
 };
-
   useEffect(() => {
     if ((variant === "v2" || variant === "v3") && incomingQueue) {
       const timer = window.setTimeout(() => setIncomingQueue(null), 5000);
