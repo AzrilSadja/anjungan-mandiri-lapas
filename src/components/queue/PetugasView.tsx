@@ -128,6 +128,9 @@ if (current) {
   utterance.pitch = 1.4;
   utterance.volume = 1;
 
+  await new Promise((resolve) => {
+  window.speechSynthesis.onvoiceschanged = resolve;
+});
   const voices = window.speechSynthesis.getVoices();
 
 console.log(
