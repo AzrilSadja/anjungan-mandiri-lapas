@@ -100,74 +100,69 @@ const nomorIndonesia = (nomor: string) => {
     .join(" ");
 };
 
-const nextQueue = async (loket: LoketNumber) => {
+  const nextQueue = async (loket: LoketNumber) => {
   try {
     setActionError("");
 
     await callQueueTicket(loket);
 
     const data = await getQueueState();
+
     setCurrentQueue(data.currentQueue);
     setPendingQueues(data.pendingQueues);
 
     const current = data.currentQueue[loket];
 
-if (current) {
+    if (current) {
 
-  const huruf = current.code.charAt(0);
-  const angka = current.code.slice(1);
+      const nomorIndonesia = (nomor: string) => {
+        return nomor
+          .replace(/0/g, " nol ")
+          .replace(/1/g, " satu ")
+          .replace(/2/g, " dua ")
+          .replace(/3/g, " tiga ")
+          .replace(/4/g, " empat ")
+          .replace(/5/g, " lima ")
+          .replace(/6/g, " enam ")
+          .replace(/7/g, " tujuh ")
+          .replace(/8/g, " delapan ")
+          .replace(/9/g, " sembilan ");
+      };
 
-  const text =
-    `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
-    `Silakan menuju loket ${loketIndonesia[loket]}`;
+      const loketIndonesia: Record<LoketNumber, string> = {
+        1: "satu",
+        2: "dua",
+        3: "tiga",
+        4: "empat",
+      };
 
-  // bunyi bel sederhana
-  const audioContext = new AudioContext();
+      const huruf = current.code.charAt(0);
+      const angka = current.code.slice(1);
 
-  const beep = () => {
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+      const text =
+        `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
+        `Silakan menuju loket ${loketIndonesia[loket]}`;
 
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      const utterance = new SpeechSynthesisUtterance(text);
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+      utterance.lang = "id-ID";
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 1;
 
-    oscillator.start();
+      window.speechSynthesis.cancel();
 
-    gainNode.gain.exponentialRampToValueAtTime(
-      0.0001,
-      audioContext.currentTime + 0.5
-    );
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 200);
+    }
 
-    oscillator.stop(audioContext.currentTime + 0.5);
-  };
+    setIncomingQueue(null);
 
-  // bunyi bel dulu
-  beep();
-
-  // setelah bel baru suara antrean
-  setTimeout(() => {
-
-    const utterance = new SpeechSynthesisUtterance(text);
-
-    utterance.lang = "id-ID";
-    utterance.rate = 0.85;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-
-  }, 700);
-}
-
-setIncomingQueue(null);
-
-} catch {
-  setActionError("Gagal memanggil antrean. Silakan coba lagi.");
-}
+  } catch (error) {
+    console.error(error);
+    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+  }
 };
 
   useEffect(() => {
