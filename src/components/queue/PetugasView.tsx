@@ -129,14 +129,12 @@ export default function PetugasView() {
     const text =
       `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
       `Silakan menuju loket ${loketIndonesia[loket]}`;
-      
+
       const bell = new Audio("/audio/beep.mp3");
 
 bell.volume = 1;
 
-bell.play().catch((err) => {
-  console.log("Audio gagal:", err);
-});
+bell.play();
 
   } catch (error) {
     console.error(error);
