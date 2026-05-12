@@ -124,43 +124,35 @@ export default function PetugasView() {
       const huruf = current.code.charAt(0);
       const angka = current.code.slice(1);
 
+      setCurrentQueue(data.currentQueue);
+      setPendingQueues(data.pendingQueues);
+
       const text =
-        `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
-        `Silakan menuju loket ${loketIndonesia[loket]}`;
+  `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
+  `Silakan menuju loket ${loketIndonesia[loket]}`;
 
-      const utterance = new SpeechSynthesisUtterance(text);
+const utterance = new SpeechSynthesisUtterance(text);
 
-      utterance.lang = "id-ID";
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-
-     window.speechSynthesis.cancel();
+utterance.lang = "id-ID";
+utterance.rate = 0.9;
+utterance.pitch = 1;
+utterance.volume = 1;
 
 const voices = window.speechSynthesis.getVoices();
 
-console.log("VOICE LIST:", voices);
+const femaleVoice =
+  voices.find((v) => v.name.includes("Zira")) ||
+  voices.find((v) => v.lang.includes("id"));
 
-if (voices.length > 0) {
-  utterance.voice = voices[0];
+if (femaleVoice) {
+  utterance.voice = femaleVoice;
 }
 
+window.speechSynthesis.cancel();
 window.speechSynthesis.speak(utterance);
 
-utterance.onstart = () => {
-  console.log("SUARA MULAI");
-};
-
-utterance.onerror = (e) => {
-  console.log("ERROR SUARA:", e);
-};
-
-utterance.onend = () => {
-  console.log("SUARA SELESAI");
-};
-
-      setCurrentQueue(data.currentQueue);
-      setPendingQueues(data.pendingQueues);
+setCurrentQueue(data.currentQueue);
+setPendingQueues(data.pendingQueues);
 
     } catch (error) {
       console.error(error);
