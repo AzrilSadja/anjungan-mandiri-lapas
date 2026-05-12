@@ -100,7 +100,28 @@ const nomorIndonesia = (nomor: string) => {
     .join(" ");
 };
 
-  const nextQueue = async (loket: LoketNumber) => {
+const nomorIndonesia = (nomor: string) => {
+  return nomor
+    .replace(/0/g, " nol ")
+    .replace(/1/g, " satu ")
+    .replace(/2/g, " dua ")
+    .replace(/3/g, " tiga ")
+    .replace(/4/g, " empat ")
+    .replace(/5/g, " lima ")
+    .replace(/6/g, " enam ")
+    .replace(/7/g, " tujuh ")
+    .replace(/8/g, " delapan ")
+    .replace(/9/g, " sembilan ");
+};
+
+const loketIndonesia: Record<LoketNumber, string> = {
+  1: "satu",
+  2: "dua",
+  3: "tiga",
+  4: "empat",
+};
+
+const nextQueue = async (loket: LoketNumber) => {
   try {
     setActionError("");
 
@@ -113,24 +134,24 @@ const nomorIndonesia = (nomor: string) => {
 
     const current = data.currentQueue[loket];
 
-if (!current) return;
+    if (!current) return;
 
-const huruf = current.code.charAt(0);
-const angka = current.code.slice(1);
+    const huruf = current.code.charAt(0);
+    const angka = current.code.slice(1);
 
-const text =
-  `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
-  `Silakan menuju loket ${loketIndonesia[loket]}`;
+    const text =
+      `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
+      `Silakan menuju loket ${loketIndonesia[loket]}`;
 
-const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(text);
 
-utterance.lang = "id-ID";
-utterance.rate = 0.9;
-utterance.pitch = 1;
-utterance.volume = 1;
+    utterance.lang = "id-ID";
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
 
-      window.speechSynthesis.cancel();
-     window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
 
     setIncomingQueue(null);
 
