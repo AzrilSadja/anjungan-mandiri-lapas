@@ -130,25 +130,11 @@ export default function PetugasView() {
       `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
       `Silakan menuju loket ${loketIndonesia[loket]}`;
 
-    const url =
-      "https://translate.google.com/translate_tts?ie=UTF-8" +
-      `&q=${encodeURIComponent(text)}` +
-      "&tl=id&client=tw-ob";
+      const bell = new Audio("/audio/beep.mp3");
 
-const audio = new Audio();
+bell.volume = 1;
 
-audio.src = url;
-audio.autoplay = false;
-audio.preload = "auto";
-audio.volume = 1;
-
-audio.oncanplaythrough = async () => {
-  try {
-    await audio.play();
-    console.log("SUARA PLAY");
-  } catch (err) {
-    console.log("GAGAL PLAY:", err);
-  }
+await bell.play();
 };
   } catch (error) {
     console.error(error);
