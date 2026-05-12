@@ -135,7 +135,7 @@ export default function PetugasView() {
 bell.volume = 1;
 
 await bell.play();
-};
+
   } catch (error) {
     console.error(error);
     setActionError("Gagal memanggil antrean. Silakan coba lagi.");
