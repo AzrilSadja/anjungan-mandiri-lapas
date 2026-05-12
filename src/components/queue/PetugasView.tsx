@@ -71,35 +71,7 @@ export function PetugasView({ variant = "v1" }: { variant?: PetugasVariant }) {
     }),
     [pendingQueues],
   );
-
-const loketIndonesia: Record<number, string> = {
-  1: "satu",
-  2: "dua",
-  3: "tiga",
-  4: "empat",
-};
-
-const nomorIndonesia = (nomor: string) => {
-  return nomor
-    .split("")
-    .map((char) => {
-      switch (char) {
-        case "0": return "nol";
-        case "1": return "satu";
-        case "2": return "dua";
-        case "3": return "tiga";
-        case "4": return "empat";
-        case "5": return "lima";
-        case "6": return "enam";
-        case "7": return "tujuh";
-        case "8": return "delapan";
-        case "9": return "sembilan";
-        default: return char;
-      }
-    })
-    .join(" ");
-};
-
+  
 const nomorIndonesia = (nomor: string) => {
   return nomor
     .replace(/0/g, " nol ")
