@@ -108,8 +108,7 @@ export default function PetugasView() {
       console.error(error);
     }
   };
-
- const nextQueue = async (loket: LoketNumber) => {
+  const nextQueue = async (loket: LoketNumber) => {
   try {
     setActionError("");
 
@@ -131,35 +130,16 @@ export default function PetugasView() {
       `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
       `Silakan menuju loket ${loketIndonesia[loket]}`;
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    const url =
+      "https://translate.google.com/translate_tts?ie=UTF-8" +
+      `&q=${encodeURIComponent(text)}` +
+      "&tl=id&client=tw-ob";
 
-    utterance.lang = "id-ID";
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    utterance.volume = 1;
+    const audio = new Audio(url);
 
-    const speakNow = () => {
-      const voices = window.speechSynthesis.getVoices();
+    audio.volume = 1;
 
-      const femaleVoice =
-        voices.find((v) => v.name.includes("Zira")) ||
-        voices.find((v) => v.lang.includes("id"));
-
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
-      }
-
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
-    };
-
-    if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        speakNow();
-      };
-    } else {
-      speakNow();
-    }
+    await audio.play();
 
   } catch (error) {
     console.error(error);
