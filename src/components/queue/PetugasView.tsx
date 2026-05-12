@@ -1,77 +1,32 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
-import { AppHeader } from "@/components/queue/AppHeader";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { callQueueTicket, getQueueState } from "@/lib/api/queue";
-import { type CurrentQueue, type LoketCode, type LoketNumber, type QueueItem, defaultCurrentQueue } from "@/lib/queue/types";
+import { useEffect, useState } from "react";
 
-const loketCardClass: Record<LoketNumber, string> = {
-  1: "bg-[#1E40AF]",
-  2: "bg-[#065F46]",
-  3: "bg-[#92400E]",
-  4: "bg-[#9F1239]",
+type LoketNumber = 1 | 2 | 3 | 4;
+
+type QueueItem = {
+  code: string;
 };
 
-const loketServiceLabel: Record<LoketNumber, string> = {
+type QueueState = {
+  currentQueue: Record<LoketNumber, QueueItem>;
+  pendingQueues: Record<LoketNumber, number>;
+};
+
+const loketLabels: Record<LoketNumber, string> = {
   1: "Tamu Dinas",
   2: "Kunjungan Warga Binaan",
   3: "Layanan Informasi",
   4: "Laporan / Pengaduan",
 };
 
-const toastClassByCode: Record<LoketCode, string> = {
-  A: "border-[#1E40AF] bg-[#1E40AF] text-white",
-  B: "border-[#065F46] bg-[#065F46] text-white",
-  C: "border-[#92400E] bg-[#92400E] text-white",
-  D: "border-[#9F1239] bg-[#9F1239] text-white",
+const loketIndonesia: Record<LoketNumber, string> = {
+  1: "satu",
+  2: "dua",
+  3: "tiga",
+  4: "empat",
 };
 
-type PetugasVariant = "v1" | "v2" | "v3";
-
-export function PetugasView({ variant = "v1" }: { variant?: PetugasVariant }) {
-  const [currentQueue, setCurrentQueue] = useState<CurrentQueue>(defaultCurrentQueue);
-  const [pendingQueues, setPendingQueues] = useState<Record<LoketCode, QueueItem[]>>({ A: [], B: [], C: [], D: [] });
-  const [incomingQueue, setIncomingQueue] = useState<QueueItem | null>(null);
-  const [actionError, setActionError] = useState<string>("");
-  const [showSidebar, setShowSidebar] = useState<boolean>(true);
-  const [sortMode, setSortMode] = useState<"default" | "type">("default");
-  const lastIssuedStampRef = useRef<string>("");
-
-  useEffect(() => {
-    const syncState = async () => {
-      const data = await getQueueState();
-      setCurrentQueue(data.currentQueue);
-      setPendingQueues(data.pendingQueues);
-
-      const issued = data.latestIssued;
-      const stamp = issued ? `${issued.nomor}-${issued.waktu}` : "";
-      if (stamp && stamp !== lastIssuedStampRef.current) {
-        setIncomingQueue(issued);
-      }
-      lastIssuedStampRef.current = stamp;
-    };
-
-    void syncState();
-    const timer = window.setInterval(() => void syncState(), 5000);
-
-    return () => {
-      window.clearInterval(timer);
-    };
-  }, []);
-
-  const disabledState = useMemo(
-    () => ({
-      1: pendingQueues.A.length === 0,
-      2: pendingQueues.B.length === 0,
-      3: pendingQueues.C.length === 0,
-      4: pendingQueues.D.length === 0,
-    }),
-    [pendingQueues],
-  );
-  
 const nomorIndonesia = (nomor: string) => {
   return nomor
     .replace(/0/g, " nol ")
@@ -86,165 +41,153 @@ const nomorIndonesia = (nomor: string) => {
     .replace(/9/g, " sembilan ");
 };
 
-const loketIndonesia: Record<LoketNumber, string> = {
-  1: "satu",
-  2: "dua",
-  3: "tiga",
-  4: "empat",
-};
+async function getQueueState(): Promise<QueueState> {
+  const res = await fetch("/api/queue/state", {
+    cache: "no-store",
+  });
 
-const nextQueue = async (loket: LoketNumber) => {
-  try {
-    setActionError("");
-
-    await callQueueTicket(loket);
-
-    const data = await getQueueState();
-
-    setCurrentQueue(data.currentQueue);
-    setPendingQueues(data.pendingQueues);
-
-    const current = data.currentQueue[loket];
-
-    if (!current) return;
-
-    const huruf = current.code.charAt(0);
-    const angka = current.code.slice(1);
-
-    const text =
-      `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
-      `Silakan menuju loket ${loketIndonesia[loket]}`;
-
-    const utterance = new SpeechSynthesisUtterance(text);
-
-    utterance.lang = "id-ID";
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-
-    setIncomingQueue(null);
-
-  } catch (error) {
-    console.error(error);
-    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+  if (!res.ok) {
+    throw new Error("Gagal mengambil data antrean");
   }
-};
+
+  return res.json();
+}
+
+async function callQueueTicket(loket: LoketNumber) {
+  const res = await fetch("/api/queue/call", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ loket }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Gagal memanggil antrean");
+  }
+
+  return res.json();
+}
+
+export default function PetugasView() {
+  const [currentQueue, setCurrentQueue] =
+    useState<Record<LoketNumber, QueueItem>>({
+      1: { code: "A-000" },
+      2: { code: "B-000" },
+      3: { code: "C-000" },
+      4: { code: "D-000" },
+    });
+
+  const [pendingQueues, setPendingQueues] =
+    useState<Record<LoketNumber, number>>({
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+    });
+
+  const [actionError, setActionError] = useState("");
 
   useEffect(() => {
-    if ((variant === "v2" || variant === "v3") && incomingQueue) {
-      const timer = window.setTimeout(() => setIncomingQueue(null), 5000);
-      return () => window.clearTimeout(timer);
-    }
-    return undefined;
-  }, [incomingQueue, variant]);
+    loadQueue();
 
-  const pendingList = useMemo(() => {
-    const list = [...pendingQueues.A, ...pendingQueues.B, ...pendingQueues.C, ...pendingQueues.D];
-    if (sortMode === "type") {
-      return list.sort((a, b) => {
-        if (a.kode === b.kode) return a.waktu - b.waktu;
-        return a.kode.localeCompare(b.kode);
-      });
+    const interval = setInterval(() => {
+      loadQueue();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadQueue = async () => {
+    try {
+      const data = await getQueueState();
+
+      setCurrentQueue(data.currentQueue);
+      setPendingQueues(data.pendingQueues);
+    } catch (error) {
+      console.error(error);
     }
-    return list.sort((a, b) => a.waktu - b.waktu);
-  }, [pendingQueues, sortMode]);
+  };
+
+  const nextQueue = async (loket: LoketNumber) => {
+    try {
+      setActionError("");
+
+      await callQueueTicket(loket);
+
+      const data = await getQueueState();
+
+      const current = data.currentQueue[loket];
+
+      if (!current) return;
+
+      const huruf = current.code.charAt(0);
+      const angka = current.code.slice(1);
+
+      const text =
+        `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
+        `Silakan menuju loket ${loketIndonesia[loket]}`;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      utterance.lang = "id-ID";
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+
+      setCurrentQueue(data.currentQueue);
+      setPendingQueues(data.pendingQueues);
+
+    } catch (error) {
+      console.error(error);
+      setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+    }
+  };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <AppHeader />
+    <div className="min-h-screen bg-black text-white p-6">
+      <h1 className="text-5xl font-bold mb-8">
+        Panel Petugas
+      </h1>
 
-      {incomingQueue && variant !== "v3" ? (
-        <div
-          className={`petugas-toast fixed right-4 top-4 z-50 rounded-2xl border-2 px-6 py-4 shadow-2xl ${toastClassByCode[incomingQueue.kode]}`}
-        >
-          <p className="text-lg font-black">Antrean Baru Masuk!</p>
-          <p className="text-sm font-semibold">
-            Loket {incomingQueue.loket}: {incomingQueue.nomor} ({incomingQueue.layanan})
-          </p>
+      {actionError && (
+        <div className="mb-4 text-red-400 text-xl">
+          {actionError}
         </div>
-      ) : null}
+      )}
 
-      <section className={`mx-auto max-w-7xl p-6 ${variant === "v3" && showSidebar ? "xl:pr-[24rem]" : ""}`}>
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-4xl font-black">Panel Petugas</h2>
-        </div>
-        {actionError ? <p className="mb-4 text-center text-sm text-rose-300">{actionError}</p> : null}
-        <div className="grid gap-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            {[1, 2, 3, 4].map((num) => {
-              const loket = num as LoketNumber;
-              return (
-                <div key={loket} className={`${loketCardClass[loket]} rounded-3xl border-b-4 border-amber-500 p-6`}>
-                  <p className="text-lg font-extrabold tracking-wide text-amber-300">
-                    Loket {loket} - {loketServiceLabel[loket]}
-                  </p>
-                  <p className="my-3 text-5xl font-black text-amber-300">{currentQueue[loket].nomor}</p>
-                  <button
-                    disabled={disabledState[loket]}
-                    onClick={() => void nextQueue(loket)}
-                    className="w-full rounded-xl bg-amber-500 py-3 font-black text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Panggil Berikutnya
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {variant === "v3" ? (
-        <>
-          <div className={`fixed top-36 z-50 transition-all ${showSidebar ? "right-[22.75rem]" : "right-4"}`}>
-            <Button
-              onClick={() => setShowSidebar((prev) => !prev)}
-              variant="outline"
-              size="icon"
-              aria-label={showSidebar ? "Hide panel antrean" : "Show panel antrean"}
-              title={showSidebar ? "Hide panel antrean" : "Show panel antrean"}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {(Object.keys(loketLabels) as unknown as LoketNumber[]).map(
+          (loket) => (
+            <div
+              key={loket}
+              className="rounded-3xl border-4 border-yellow-400 p-6 bg-blue-900"
             >
-              {showSidebar ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-            </Button>
-          </div>
+              <h2 className="text-3xl font-bold mb-4 text-yellow-300">
+                Loket {loket} - {loketLabels[loket]}
+              </h2>
 
-          {showSidebar ? (
-            <aside className="fixed right-0 top-28 z-40 h-[calc(100vh-7rem)] w-[22rem] p-3">
-              <Card className="h-full overflow-hidden">
-                <CardHeader>
-                  <CardTitle>Daftar Antrean</CardTitle>
-                  <Button
-                    onClick={() => setSortMode((prev) => (prev === "default" ? "type" : "default"))}
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 rounded-lg border border-slate-600/70 bg-slate-800/80"
-                    aria-label={sortMode === "default" ? "Sort by type" : "Sort by waktu masuk"}
-                    title={sortMode === "default" ? "Sort: default (waktu masuk)" : "Sort: type"}
-                  >
-                    <ArrowUpDown className="h-4 w-4" />
-                  </Button>
-                </CardHeader>
-                <CardContent className="h-[calc(100%-4.5rem)]">
-                  <p className="mb-3 text-xs text-slate-300">Sort: {sortMode === "default" ? "Waktu Masuk" : "Type"}</p>
-                  <div className="h-[calc(100%-1.5rem)] space-y-2 overflow-auto pr-1">
-                    {pendingList.length === 0 ? <p className="text-sm text-slate-300">Belum ada antrean menunggu.</p> : null}
-                    {pendingList.map((item) => (
-                      <div key={`${item.nomor}-${item.waktu}`} className={`rounded-lg border px-3 py-2 text-sm ${toastClassByCode[item.kode]}`}>
-                        <p className="font-black">
-                          {item.nomor} • Loket {item.loket}
-                        </p>
-                        <p className="text-xs">{item.layanan}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </aside>
-          ) : null}
-        </>
-      ) : null}
-    </main>
+              <div className="text-7xl font-extrabold text-yellow-300 mb-6">
+                {currentQueue[loket]?.code}
+              </div>
+
+              <div className="mb-4 text-xl">
+                Sisa antrean: {pendingQueues[loket]}
+              </div>
+
+              <button
+                onClick={() => nextQueue(loket)}
+                className="w-full rounded-2xl bg-yellow-600 hover:bg-yellow-500 text-black font-bold text-2xl py-4"
+              >
+                Panggil Berikutnya
+              </button>
+            </div>
+          )
+        )}
+      </div>
+    </div>
   );
 }
