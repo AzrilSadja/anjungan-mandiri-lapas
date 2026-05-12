@@ -108,37 +108,19 @@ export default function PetugasView() {
       console.error(error);
     }
   };
-  const nextQueue = async (loket: LoketNumber) => {
+  
+ const nextQueue = async (loket: LoketNumber) => {
   try {
-    setActionError("");
+    const bell = new Audio("/audio/beep.mp3");
 
-    await callQueueTicket(loket);
+    bell.volume = 1;
 
-    const data = await getQueueState();
+    await bell.play();
 
-    const current = data.currentQueue[loket];
-
-    if (!current) return;
-
-    setCurrentQueue(data.currentQueue);
-    setPendingQueues(data.pendingQueues);
-
-    const huruf = current.code.charAt(0);
-    const angka = current.code.slice(1);
-
-    const text =
-      `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
-      `Silakan menuju loket ${loketIndonesia[loket]}`;
-
-      const bell = new Audio("/audio/beep.mp3");
-
-bell.volume = 1;
-
-bell.play();
+    console.log("BEEP BERHASIL");
 
   } catch (error) {
-    console.error(error);
-    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+    console.error("AUDIO ERROR:", error);
   }
 };
 
