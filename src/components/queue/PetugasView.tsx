@@ -72,74 +72,18 @@ export function PetugasView({ variant = "v1" }: { variant?: PetugasVariant }) {
     [pendingQueues],
   );
 
-const loketIndonesia: Record<number, string> = {
-  1: "satu",
-  2: "dua",
-  3: "tiga",
-  4: "empat",
-};
-
-const nomorIndonesia = (nomor: string) => {
-  return nomor
-    .split("")
-    .map((char) => {
-      switch (char) {
-        case "0": return "nol";
-        case "1": return "satu";
-        case "2": return "dua";
-        case "3": return "tiga";
-        case "4": return "empat";
-        case "5": return "lima";
-        case "6": return "enam";
-        case "7": return "tujuh";
-        case "8": return "delapan";
-        case "9": return "sembilan";
-        default: return char;
-      }
-    })
-    .join(" ");
-};
-
   const nextQueue = async (loket: LoketNumber) => {
-  try {
-    setActionError("");
-
-    await callQueueTicket(loket);
-
-    const data = await getQueueState();
-
-    setCurrentQueue(data.currentQueue);
-    setPendingQueues(data.pendingQueues);
-
-    const current = data.currentQueue[loket];
-
-if (!current) return;
-
-const huruf = current.code.charAt(0);
-if (!current) return;
-const angka = current.code.slice(1);
-
-const text =
-  `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
-  `Silakan menuju loket ${loketIndonesia[loket]}`;
-
-const utterance = new SpeechSynthesisUtterance(text);
-
-utterance.lang = "id-ID";
-utterance.rate = 0.9;
-utterance.pitch = 1;
-utterance.volume = 1;
-
-      window.speechSynthesis.cancel();
-     window.speechSynthesis.speak(utterance);
-
-    setIncomingQueue(null);
-
-  } catch (error) {
-    console.error(error);
-    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
-  }
-};
+    try {
+      setActionError("");
+      await callQueueTicket(loket);
+      setIncomingQueue(null);
+      const data = await getQueueState();
+      setCurrentQueue(data.currentQueue);
+      setPendingQueues(data.pendingQueues);
+    } catch {
+      setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+    }
+  };
 
   useEffect(() => {
     if ((variant === "v2" || variant === "v3") && incomingQueue) {
