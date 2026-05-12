@@ -109,56 +109,63 @@ export default function PetugasView() {
     }
   };
 
-  const nextQueue = async (loket: LoketNumber) => {
-    try {
-      setActionError("");
+ const nextQueue = async (loket: LoketNumber) => {
+  try {
+    setActionError("");
 
-      await callQueueTicket(loket);
+    await callQueueTicket(loket);
 
-      const data = await getQueueState();
+    const data = await getQueueState();
 
-      const current = data.currentQueue[loket];
+    const current = data.currentQueue[loket];
 
-      if (!current) return;
+    if (!current) return;
 
-      const huruf = current.code.charAt(0);
-      const angka = current.code.slice(1);
+    setCurrentQueue(data.currentQueue);
+    setPendingQueues(data.pendingQueues);
 
-      setCurrentQueue(data.currentQueue);
-      setPendingQueues(data.pendingQueues);
+    const huruf = current.code.charAt(0);
+    const angka = current.code.slice(1);
 
-      const text =
-  `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
-  `Silakan menuju loket ${loketIndonesia[loket]}`;
+    const text =
+      `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
+      `Silakan menuju loket ${loketIndonesia[loket]}`;
 
-const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(text);
 
-utterance.lang = "id-ID";
-utterance.rate = 0.9;
-utterance.pitch = 1;
-utterance.volume = 1;
+    utterance.lang = "id-ID";
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
 
-const voices = window.speechSynthesis.getVoices();
+    const speakNow = () => {
+      const voices = window.speechSynthesis.getVoices();
 
-const femaleVoice =
-  voices.find((v) => v.name.includes("Zira")) ||
-  voices.find((v) => v.lang.includes("id"));
+      const femaleVoice =
+        voices.find((v) => v.name.includes("Zira")) ||
+        voices.find((v) => v.lang.includes("id"));
 
-if (femaleVoice) {
-  utterance.voice = femaleVoice;
-}
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
 
-window.speechSynthesis.cancel();
-window.speechSynthesis.speak(utterance);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    };
 
-setCurrentQueue(data.currentQueue);
-setPendingQueues(data.pendingQueues);
-
-    } catch (error) {
-      console.error(error);
-      setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        speakNow();
+      };
+    } else {
+      speakNow();
     }
-  };
+
+  } catch (error) {
+    console.error(error);
+    setActionError("Gagal memanggil antrean. Silakan coba lagi.");
+  }
+};
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
