@@ -135,8 +135,29 @@ export default function PetugasView() {
       utterance.pitch = 1;
       utterance.volume = 1;
 
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
+     window.speechSynthesis.cancel();
+
+const voices = window.speechSynthesis.getVoices();
+
+console.log("VOICE LIST:", voices);
+
+if (voices.length > 0) {
+  utterance.voice = voices[0];
+}
+
+window.speechSynthesis.speak(utterance);
+
+utterance.onstart = () => {
+  console.log("SUARA MULAI");
+};
+
+utterance.onerror = (e) => {
+  console.log("ERROR SUARA:", e);
+};
+
+utterance.onend = () => {
+  console.log("SUARA SELESAI");
+};
 
       setCurrentQueue(data.currentQueue);
       setPendingQueues(data.pendingQueues);
