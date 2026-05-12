@@ -118,43 +118,49 @@ if (current) {
   const angka = current.code.slice(1);
 
   const text =
-  `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
-  `Silakan menuju loket ${loketIndonesia[loket]}`;
+    `Nomor antrean ${huruf} ${nomorIndonesia(angka)}. ` +
+    `Silakan menuju loket ${loketIndonesia[loket]}`;
 
-const utterance = new SpeechSynthesisUtterance(text);
+  // bunyi bel sederhana
+  const audioContext = new AudioContext();
 
-utterance.lang = "id-ID";
-utterance.rate = 0.8;
-utterance.pitch = 1.2;
-utterance.volume = 1;
+  const beep = () => {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
 
-const voices = window.speechSynthesis.getVoices();
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
 
-console.log(
-  voices.map((v) => ({
-    name: v.name,
-    lang: v.lang,
-  }))
-);
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
 
-const femaleVoice =
-  voices.find((v) =>
-    v.lang.toLowerCase().includes("id")
-  ) ||
-  voices.find((v) =>
-    v.name.toLowerCase().includes("zira")
-  );
+    oscillator.start();
 
-if (femaleVoice) {
-  utterance.voice = femaleVoice;
-}
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioContext.currentTime + 0.5
+    );
 
-window.speechSynthesis.cancel();
+    oscillator.stop(audioContext.currentTime + 0.5);
+  };
 
-setTimeout(() => {
-  window.speechSynthesis.speak(utterance);
-}, 100);
+  // bunyi bel dulu
+  beep();
 
+  // setelah bel baru suara antrean
+  setTimeout(() => {
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "id-ID";
+    utterance.rate = 0.85;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+
+  }, 700);
 }
 
 setIncomingQueue(null);
