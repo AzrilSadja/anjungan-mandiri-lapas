@@ -135,12 +135,21 @@ export default function PetugasView() {
       `&q=${encodeURIComponent(text)}` +
       "&tl=id&client=tw-ob";
 
-    const audio = new Audio(url);
+const audio = new Audio();
 
-    audio.volume = 1;
+audio.src = url;
+audio.autoplay = false;
+audio.preload = "auto";
+audio.volume = 1;
 
+audio.oncanplaythrough = async () => {
+  try {
     await audio.play();
-
+    console.log("SUARA PLAY");
+  } catch (err) {
+    console.log("GAGAL PLAY:", err);
+  }
+};
   } catch (error) {
     console.error(error);
     setActionError("Gagal memanggil antrean. Silakan coba lagi.");
