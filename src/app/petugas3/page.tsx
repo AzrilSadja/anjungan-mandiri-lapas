@@ -1,3 +1,5 @@
+import PetugasView from "@/components/queue/PetugasView";
+
 export default function Petugas3Page() {
-  return <h1>Petugas 3</h1>;
+  return <PetugasView />;
 }
