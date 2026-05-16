@@ -14,7 +14,7 @@ export function AppHeader() {
     <header className="border-b-4 border-amber-500 bg-blue-900 p-4 shadow-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-white md:text-3xl">LAPAS KELAS IIA PEKALONGAN</h1>
+          <h1 className="text-2xl font-black text-white md:text-3xl">LAPAS KELAS IIA PEKALONGAN TEST</h1>
           <p className="font-bold italic text-amber-400">&quot;BERBAKTI NYATA, PRIMA MELAYANI&quot;</p>
         </div>
         <div className="text-right text-white">
