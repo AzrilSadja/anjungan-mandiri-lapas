@@ -133,7 +133,6 @@ const chooseFemaleVoice = (
     const chosen = chooseFemaleVoice(voices);
     if (chosen) {
   utter.voice = chosen;
-  utter.voiceURI = chosen.voiceURI;
   utter.lang = chosen.lang;
 }
     
