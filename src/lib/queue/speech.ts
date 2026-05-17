@@ -144,9 +144,9 @@ const chooseFemaleVoice = (
 
     window.speechSynthesis.cancel();
     playBeep();
-    void waitForBeepEnd().then(() => {
-      window.speechSynthesis.speak(utter);
-    });
+    setTimeout(() => {
+     window.speechSynthesis.speak(utter);
+    }, 500);
   };
 
   const voices = window.speechSynthesis.getVoices();
