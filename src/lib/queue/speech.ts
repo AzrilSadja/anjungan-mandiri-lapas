@@ -132,9 +132,10 @@ const chooseFemaleVoice = (
     console.log(voices);
     const chosen = chooseFemaleVoice(voices);
     if (chosen) {
-  utter.voice = chosen;
-  utter.lang = chosen.lang;
-}
+    utter.voice = chosen;
+  }
+
+    utter.lang = "id-ID";
     
 
     // Slightly increase pitch to make the voice sound more feminine on some engines
