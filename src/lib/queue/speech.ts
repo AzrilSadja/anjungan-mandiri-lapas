@@ -129,11 +129,18 @@ const chooseFemaleVoice = (
 
   const applyVoiceAndSpeak = () => {
     const voices = window.speechSynthesis.getVoices() || [];
+    console.log(voices);
     const chosen = chooseFemaleVoice(voices);
-    if (chosen) utter.voice = chosen;
+    if (chosen) {
+  utter.voice = chosen;
+  utter.voiceURI = chosen.voiceURI;
+  utter.lang = chosen.lang;
+}
+    
 
     // Slightly increase pitch to make the voice sound more feminine on some engines
-    utter.pitch = 1.05;
+    utter.pitch = 1.4;
+    utter.rate = 0.9;
 
     window.speechSynthesis.cancel();
     playBeep();
