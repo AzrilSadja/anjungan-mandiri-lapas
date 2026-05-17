@@ -44,10 +44,10 @@ export function PengunjungView() {
       window.setTimeout(() => {
         window.print();
       }, 500);
-    } catch {
-      console.log(err)
-      setSubmitError("Gagal mengambil nomor antrean. Silakan coba lagi.");
-    }
+} catch (err) {
+  console.log(err)
+  setSubmitError("Gagal mengambil nomor antrean. Silakan coba lagi.");
+}
   };
 
   return (
