@@ -76,6 +76,7 @@ export function PetugasView({ variant = "v1" }: { variant?: PetugasVariant }) {
     try {
       setActionError("");
       await callQueueTicket(loket);
+      console.log("SUARA DIPANGGIL");
       setIncomingQueue(null);
       const data = await getQueueState();
       setCurrentQueue(data.currentQueue);
