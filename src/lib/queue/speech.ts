@@ -130,20 +130,13 @@ const chooseFemaleVoice = (
   const applyVoiceAndSpeak = () => {
     const voices = window.speechSynthesis.getVoices() || [];
     console.log(voices);
-    const chosen = chooseFemaleVoice(voices);
-    if (chosen) {
-    utter.voice = chosen;
-  }
-
     utter.lang = "id-ID";
     
 
     // Slightly increase pitch to make the voice sound more feminine on some engines
     utter.pitch = 1.4;
-    utter.rate = 0.9;
+    utter.rate = 0.85;
 
-    window.speechSynthesis.cancel();
-    playBeep();
      window.speechSynthesis.speak(utter);
   };
 
