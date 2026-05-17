@@ -6,7 +6,6 @@ import { AppHeader } from "@/components/queue/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { callQueueTicket, getQueueState } from "@/lib/api/queue";
-import { speakText, setupSpeechUnlockOnInteraction } from "@/lib/queue/speech";
 import { type CurrentQueue, type LoketCode, type LoketNumber, type QueueItem, defaultCurrentQueue } from "@/lib/queue/types";
 
 const loketCardClass: Record<LoketNumber, string> = {
@@ -42,7 +41,6 @@ export function PetugasView({ variant = "v1" }: { variant?: PetugasVariant }) {
   const lastIssuedStampRef = useRef<string>("");
 
   useEffect(() => {
-    setupSpeechUnlockOnInteraction();
     const syncState = async () => {
       const data = await getQueueState();
       setCurrentQueue(data.currentQueue);
@@ -78,7 +76,6 @@ export function PetugasView({ variant = "v1" }: { variant?: PetugasVariant }) {
     try {
       setActionError("");
       await callQueueTicket(loket);
-      speakText(`Nomor antrian menuju loket ${loket}`);
       setIncomingQueue(null);
       const data = await getQueueState();
       setCurrentQueue(data.currentQueue);
