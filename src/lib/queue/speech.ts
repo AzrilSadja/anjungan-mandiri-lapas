@@ -104,62 +104,16 @@ function playGeneratedBeep(): void {
 }
 
 export function speakText(text: string): void {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  unlockSpeech();
+  if (typeof window === "undefined") return;
+
   const utter = new SpeechSynthesisUtterance(text);
+
   utter.lang = "id-ID";
-  utter.rate = 0.8;
+  utter.pitch = 1;
+  utter.rate = 0.85;
+  utter.volume = 1;
 
-  // Heuristic to pick a female-sounding voice when available.
-const chooseFemaleVoice = (
-  voices: SpeechSynthesisVoice[],
-): SpeechSynthesisVoice | null => {
-  if (!voices || voices.length === 0) return null;
+  window.speechSynthesis.speak(utter);
 
-  // Paksa pilih suara wanita Windows
-  let v =
-    voices.find((x) => x.name.includes("Zira")) ||
-    voices.find((x) => x.name.includes("Female")) ||
-    voices.find((x) => x.name.includes("female")) ||
-    voices.find((x) => x.lang === "id-ID") ||
-    voices[0];
-
-  return v || null;
-  };
-
-  const applyVoiceAndSpeak = () => {
-    const voices = window.speechSynthesis.getVoices() || [];
-    console.log(voices);
-    utter.lang = "id-ID";
-    
-
-    // Slightly increase pitch to make the voice sound more feminine on some engines
-    utter.pitch = 1.4;
-    utter.rate = 0.85;
-
-     window.speechSynthesis.speak(utter);
-     console.log("SPEAK DIJALANKAN", utter.text);
-  };
-
-  const voices = window.speechSynthesis.getVoices();
-  if (voices && voices.length) {
-    applyVoiceAndSpeak();
-  } else {
-    // Wait for voices to load, but fallback after 1s
-    const onVoicesChanged = () => {
-      window.speechSynthesis.removeEventListener(
-        "voiceschanged",
-        onVoicesChanged,
-      );
-      applyVoiceAndSpeak();
-    };
-    window.speechSynthesis.addEventListener("voiceschanged", onVoicesChanged);
-    window.setTimeout(() => {
-      window.speechSynthesis.removeEventListener(
-        "voiceschanged",
-        onVoicesChanged,
-      );
-      applyVoiceAndSpeak();
-    }, 1000);
-  }
+  console.log("SUARA JALAN:", text);
 }
