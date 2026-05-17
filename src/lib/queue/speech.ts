@@ -111,31 +111,20 @@ export function speakText(text: string): void {
   utter.rate = 0.8;
 
   // Heuristic to pick a female-sounding voice when available.
-  const chooseFemaleVoice = (
-    voices: SpeechSynthesisVoice[],
-  ): SpeechSynthesisVoice | null => {
-    if (!voices || voices.length === 0) return null;
+const chooseFemaleVoice = (
+  voices: SpeechSynthesisVoice[],
+): SpeechSynthesisVoice | null => {
+  if (!voices || voices.length === 0) return null;
 
-    // Prefer Indonesian voices when present
-    const idVoices = voices.filter(
-      (v) => v.lang && v.lang.toLowerCase().startsWith("id"),
-    );
-    const pool = idVoices.length ? idVoices : voices;
+  // Paksa pilih suara wanita Windows
+  let v =
+    voices.find((x) => x.name.includes("Zira")) ||
+    voices.find((x) => x.name.includes("Female")) ||
+    voices.find((x) => x.name.includes("female")) ||
+    voices.find((x) => x.lang === "id-ID") ||
+    voices[0];
 
-    // Regex heuristics for female voices / WaveNet F naming
-    const wavenetF = /wave\s*-?net[^\w]*f/i;
-    const femaleTokens = /(female|woman|wanita|perempuan|\bF\b)/i;
-
-    let v = pool.find(
-      (x) => wavenetF.test(x.name) || wavenetF.test(x.voiceURI || ""),
-    );
-    if (!v)
-      v = pool.find(
-        (x) => femaleTokens.test(x.name) || femaleTokens.test(x.voiceURI || ""),
-      );
-    if (!v) v = pool.find((x) => /google.*indonesian/i.test(x.name));
-    if (!v) v = pool[0];
-    return v || null;
+  return v || null;
   };
 
   const applyVoiceAndSpeak = () => {
