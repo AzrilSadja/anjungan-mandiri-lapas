@@ -138,6 +138,7 @@ const chooseFemaleVoice = (
     utter.rate = 0.85;
 
      window.speechSynthesis.speak(utter);
+     console.log("SPEAK DIJALANKAN", utter.text);
   };
 
   const voices = window.speechSynthesis.getVoices();
