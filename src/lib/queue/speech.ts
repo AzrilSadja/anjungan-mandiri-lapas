@@ -108,6 +108,16 @@ export function speakText(text: string): void {
 
   const utter = new SpeechSynthesisUtterance(text);
 
+  const voices = window.speechSynthesis.getVoices();
+
+  const indoVoice = voices.find(
+    (v) => v.name.includes("Andika")
+  );
+
+  if (indoVoice) {
+    utter.voice = indoVoice;
+  }
+
   utter.lang = "id-ID";
   utter.pitch = 1;
   utter.rate = 0.85;
