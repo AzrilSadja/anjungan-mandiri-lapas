@@ -106,24 +106,28 @@ function playGeneratedBeep(): void {
 export function speakText(text: string): void {
   if (typeof window === "undefined") return;
 
-  const utter = new SpeechSynthesisUtterance(text);
+  window.speechSynthesis.cancel();
 
-  const voices = window.speechSynthesis.getVoices();
+  setTimeout(() => {
+    const voices = window.speechSynthesis.getVoices();
 
-  const indoVoice = voices.find(
-    (v) => v.name.includes("Andika")
-  );
+    const utter = new SpeechSynthesisUtterance(text);
 
-  if (indoVoice) {
-    utter.voice = indoVoice;
-  }
+    const indoVoice = voices.find(
+      (v) => v.name.includes("Andika")
+    );
 
-  utter.lang = "id-ID";
-  utter.pitch = 1;
-  utter.rate = 0.85;
-  utter.volume = 1;
+    if (indoVoice) {
+      utter.voice = indoVoice;
+    }
 
-  window.speechSynthesis.speak(utter);
+    utter.lang = "id-ID";
+    utter.pitch = 1;
+    utter.rate = 0.85;
+    utter.volume = 1;
 
-  console.log("SUARA JALAN:", text);
+    window.speechSynthesis.speak(utter);
+
+    console.log("SUARA JALAN:", text);
+  }, 300);
 }
