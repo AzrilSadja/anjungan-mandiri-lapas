@@ -102,24 +102,13 @@ function playGeneratedBeep(): void {
   oscillator.start(now);
   oscillator.stop(now + 0.2);
 }
-
 export function speakText(text: string): void {
   if (typeof window === "undefined") return;
 
   window.speechSynthesis.cancel();
 
   setTimeout(() => {
-    const voices = window.speechSynthesis.getVoices();
-
     const utter = new SpeechSynthesisUtterance(text);
-
-    const indoVoice = voices.find(
-      (v) => v.name.includes("Andika")
-    );
-
-    if (indoVoice) {
-      utter.voice = indoVoice;
-    }
 
     utter.lang = "id-ID";
     utter.pitch = 1;
