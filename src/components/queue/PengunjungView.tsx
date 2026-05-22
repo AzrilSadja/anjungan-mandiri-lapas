@@ -72,10 +72,10 @@ export function PengunjungView() {
 
       {activeTicket ? (
         <div className="queue-print-ticket queue-print-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-          <div className="queue-print-card w-full max-w-sm rounded-3xl bg-white p-8 text-center text-slate-900 shadow-2xl">
+          <div className="queue-print-card bg-white text-center text-slate-900">
             <p className="text-xs font-black uppercase tracking-wider text-slate-500">Lapas Kelas IIA Pekalongan</p>
             <p className="mt-4 text-sm font-semibold text-slate-500">Nomor Antrean Anda:</p>
-            <p className="my-1 text-[90px] font-black text-slate-900">{activeTicket.nomor}</p>
+            <p className="my-1 text-[72px] font-black text-slate-900 leading-none">{activeTicket.nomor}</p>
             <p className="text-lg font-black uppercase text-blue-900">{activeTicket.layanan}</p>
             <p className="mt-1 text-xs text-slate-500">{new Date(activeTicket.waktu).toLocaleString("id-ID")}</p>
           </div>
@@ -85,47 +85,57 @@ export function PengunjungView() {
       <style jsx global>{`
   @media print {
 
-  body * {
-    visibility: hidden !important;
-  }
+    body * {
+      visibility: hidden !important;
+    }
 
-  .queue-print-ticket,
-  .queue-print-ticket * {
-    visibility: visible !important;
-  }
+    .queue-print-ticket,
+    .queue-print-ticket * {
+      visibility: visible !important;
+    }
 
-  .queue-print-ticket {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-    padding-top: 10px !important;
-    position: fixed !important;
-    inset: 0 !important;
-    background: white !important;
-  }
+    .queue-print-ticket {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: flex-start !important;
+      padding-top: 10px !important;
+      position: fixed !important;
+      inset: 0 !important;
+      background: white !important;
+    }
 
-  .queue-print-card {
-    width: 72mm !important;
-    padding: 10px !important;
-    border: 2px solid black !important;
-    border-radius: 10px !important;
-    text-align: center !important;
-    box-shadow: none !important;
-    background: white !important;
-    margin: 0 auto !important;
+    .queue-print-card {
+      width: 58mm !important;
+      min-height: 70mm !important;
+      padding: 8px !important;
 
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    gap: 6px !important;
-  }
+      border: 2px solid black !important;
+      border-radius: 10px !important;
 
-  @page {
-    size: 80mm auto;
-    margin: 0;
+      text-align: center !important;
+      box-shadow: none !important;
+      background: white !important;
+
+      margin: 0 auto !important;
+
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+
+      gap: 4px !important;
+
+      overflow: hidden !important;
+      page-break-inside: avoid !important;
+    }
+
+    @page {
+      size: 58mm 100mm;
+      margin: 0;
+    }
   }
-}
-  `}</style>
-    </main>
+`}</style>
+
+</main>
   );
 }
