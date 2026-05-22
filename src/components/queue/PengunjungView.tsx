@@ -85,8 +85,6 @@ export function PengunjungView() {
       <style jsx global>{`
   @media print {
 
-  @media print {
-
   body * {
     visibility: hidden !important;
   }
@@ -119,4 +117,8 @@ export function PengunjungView() {
     size: 58mm auto;
     margin: 0;
   }
+}
+  `}</style>
+    </main>
+  );
 }
