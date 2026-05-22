@@ -75,8 +75,8 @@ export function PengunjungView() {
           <div className="queue-print-card w-full max-w-sm rounded-3xl bg-white p-8 text-center text-slate-900 shadow-2xl">
             <p className="text-xs font-black uppercase tracking-wider text-slate-500">Lapas Kelas IIA Pekalongan</p>
             <p className="mt-4 text-sm font-semibold text-slate-500">Nomor Antrean Anda:</p>
-            <p className="my-3 text-7xl font-black text-slate-900">{activeTicket.nomor}</p>
-            <p className="text-sm font-black uppercase text-blue-900">{activeTicket.layanan}</p>
+            <p className="my-1 text-[90px] font-black text-slate-900">{activeTicket.nomor}</p>
+            <p className="text-lg font-black uppercase text-blue-900">{activeTicket.layanan}</p>
             <p className="mt-1 text-xs text-slate-500">{new Date(activeTicket.waktu).toLocaleString("id-ID")}</p>
           </div>
         </div>
@@ -97,24 +97,31 @@ export function PengunjungView() {
   .queue-print-ticket {
     display: flex !important;
     justify-content: center !important;
-    align-items: center !important;
+    align-items: flex-start !important;
+    padding-top: 10px !important;
     position: fixed !important;
     inset: 0 !important;
     background: white !important;
   }
 
   .queue-print-card {
-    width: 58mm !important;
+    width: 72mm !important;
     padding: 10px !important;
     border: 2px solid black !important;
     border-radius: 10px !important;
     text-align: center !important;
     box-shadow: none !important;
     background: white !important;
+    margin: 0 auto !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 6px !important;
   }
 
   @page {
-    size: 58mm auto;
+    size: 80mm auto;
     margin: 0;
   }
 }
