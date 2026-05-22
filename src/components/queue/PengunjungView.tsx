@@ -78,12 +78,6 @@ export function PengunjungView() {
             <p className="my-3 text-7xl font-black text-slate-900">{activeTicket.nomor}</p>
             <p className="text-sm font-black uppercase text-blue-900">{activeTicket.layanan}</p>
             <p className="mt-1 text-xs text-slate-500">{new Date(activeTicket.waktu).toLocaleString("id-ID")}</p>
-            <button
-              onClick={() => setActiveTicket(null)}
-              className="no-print mt-6 w-full rounded-full bg-slate-900 px-4 py-3 font-black uppercase tracking-wider text-white"
-            >
-              Tutup
-            </button>
           </div>
         </div>
       ) : null}
