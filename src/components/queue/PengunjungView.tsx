@@ -85,43 +85,38 @@ export function PengunjungView() {
       <style jsx global>{`
   @media print {
 
-    body * {
-      display: none !important;
-    }
+  @media print {
 
-    .queue-print-ticket {
-      display: flex !important;
-      justify-content: center !important;
-      align-items: center !important;
-      position: fixed !important;
-      inset: 0 !important;
-      background: white !important;
-    }
-
-    .queue-print-card,
-    .queue-print-card * {
-      display: block !important;
-    }
-
-    .queue-print-card {
-      width: 58mm !important;
-      padding: 10px !important;
-      border: 2px solid black !important;
-      border-radius: 10px !important;
-      text-align: center !important;
-      box-shadow: none !important;
-    }
-
-    .no-print {
-      display: none !important;
-    }
-
-    @page {
-      size: 58mm auto;
-      margin: 0;
-    }
+  body * {
+    visibility: hidden !important;
   }
-`}</style>
-    </main>
-  );
+
+  .queue-print-ticket,
+  .queue-print-ticket * {
+    visibility: visible !important;
+  }
+
+  .queue-print-ticket {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: white !important;
+  }
+
+  .queue-print-card {
+    width: 58mm !important;
+    padding: 10px !important;
+    border: 2px solid black !important;
+    border-radius: 10px !important;
+    text-align: center !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
 }
